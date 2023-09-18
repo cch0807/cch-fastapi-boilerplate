@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "cch-fastapi-boilerplate"
+version = "0.1.0"
+description = ""
+authors = ["cch0807 <ckdgus11021@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.8.10"
+uvicorn = "^0.23.2"
+sqlalchemy = "^2.0.20"
+black = "^23.9.1"
+
+[tool.poetry.group.dev.dependencies]
+fastapi = "^0.103.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
