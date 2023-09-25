@@ -10,6 +10,55 @@
 - `uvicorn` : 0.23.2
 - `poetry` : 1.6.1
 
+### 디렉토리 구조
+```
+.
+├── Dockerfile
+├── README.md
+├── alembic.ini
+├── app
+│   ├── __init__.py
+│   ├── api
+│   │   ├── __init__.py
+│   │   └── user.py
+│   ├── core
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   ├── const.py
+│   │   ├── logging.py
+│   │   └── middlewares
+│   │       └── authentication.py
+│   ├── db
+│   │   ├── __init__.py
+│   │   ├── base.py
+│   │   ├── base_class.py
+│   │   ├── connection.py
+│   │   ├── errors.py
+│   │   ├── migrations
+│   │   │   ├── env.py
+│   │   │   ├── script.py.mako
+│   │   │   └── versions
+│   │   └── repositories
+│   │       ├── base.py
+│   │       └── users.py
+│   ├── main.py
+│   ├── models
+│   │   ├── __init__.py
+│   │   ├── common.py
+│   │   ├── domain
+│   │   │   ├── __init__.py
+│   │   │   └── users.py
+│   │   └── schemas
+│   │       ├── __init__.py
+│   │       └── user.py
+│   ├── resources
+│   │   ├── __init__.py
+│   │   └── strings.py
+│   └── services
+├── docker-compose.yml
+├── poetry.lock
+└── pyproject.toml
+```
 
 ### 브랜치 운영 규칙
 - `main` 브랜치는 `staging` 용도입니다.
