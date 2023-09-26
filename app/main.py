@@ -3,8 +3,6 @@ from fastapi import FastAPI
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 
-from middlewares.authentication import AuthenticationMiddleware
-
 
 def make_middleware() -> List[Middleware]:
     middleware = [

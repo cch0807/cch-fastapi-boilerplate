@@ -1,32 +1,55 @@
-import os
 import pytz
 
-from dotenv import load_dotenv
+from pydantic_settings import BaseSettings
 from starlette.config import Config
-
-# TODO: config 설정 방법 변경 ( 현재 방법은 임시 )
 
 config = Config(".env")
 
-API_PROTOCOL = config("API_PROTOCOL")
-API_HOST = config("API_HOST")
-API_PORT = config("API_PORT")
 
-# postgres
-POSTGRES_HOST = config("POSTGRES_HOST")
-POSTGRES_PORT = config("POSTGRES_PORT")
-POSTGRES_USER = config("POSTGRES_USER")
-POSTGRES_PASSWORD = config("POSTGRES_PASSWORD")
-POSTGRES_DB = config("POSTGRES_DB")
+class Config(BaseSettings):
+    ENV: str = "development"
+    DEBUG: bool = True
 
-# misc
-TIMEZONE = pytz.timezone("Asia/Seoul")
+    APP_HOST: str = "0.0.0.0"
+    APP_PORT: int = 8000
 
-# 토큰 관련
-# to get a string like this run: openssl rand -hex 32
-JWT_SECRET_KEY = config("JWT_SECRET_KEY")
-JWT_REFRESH_SECRET_KEY = config("JWT_REFRESH_SECRET_KEY")
-ALGORITHM = "HS256"
+    JWT_SCRECT_KEY: str = "fastapi"
+    JWT_REFRESH_SECRET_KEY: str = "fastapi"
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30  # 30분
+    REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 1주일
 
-ACCESS_TOKEN_EXPIRE_MINUTES = 30  # 30분
-REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 1주일
+    # Postgres
+    POSTGRES_HOST: str = "127.0.0.1"
+    POSTGRES_PORT: int = 5432
+    POSTGRES_USER: str = "postgres"
+    POSTGRES_PASSWORD: str = "postgres"
+    POSTGRES_DB: str = "postgres"
+
+    # # misc
+    TIMEZONE = pytz.timezone("Asia/Seoul")
+
+
+class DevelopmentConfig(Config):
+    pass
+
+
+class LocalConfig(Config):
+    pass
+
+
+class ProductionConfig(Config):
+    DEBUG: str = False
+
+
+def get_config():
+    env = config("ENV")
+    config_type = {
+        "dev": DevelopmentConfig(),
+        "local": LocalConfig(),
+        "prod": ProductionConfig(),
+    }
+    return config_type[env]
+
+
+config: Config = get_config()
