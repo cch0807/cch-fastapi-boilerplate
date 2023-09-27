@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+  traefik:
+    # The latest official supported Traefik docker image
+    image: traefik:v2.3
+    # Enables the Traefik Dashboard and tells Traefik to listen to docker
+    # enable --log.level=INFO so we can see what Traefik is doing in the log files
+    ports:
+      # Exposes port 80 for incomming web requests
+      - "80:80"
+      - "443:443"
+      # The Web UI port http://0.0.0.0:8080 (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./letsencrypt:/letsencrypt
+      - ./traefik.yml:/etc/traefik/traefik.yml
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck"]
+      interval: 10s
+      timeout: 2s
+      retries: 3
+      start_period: 5s
+    # environment:
+    #   - "DO_AUTH_TOKEN=<>"
+    # deploy:
+    #   labels:
+    #     - "traefik.enable=true"
+    #     - "traefik.http.routers.dashboard.rule=Host(`traefik.localhost`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard))"
+    #     - "traefik.http.routers.dashboard.service=api@internal"
+    #     - "traefik.http.routers.dashboard.entrypoints=web"
+    #     - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
+
+
+  catapp:
+     # A Random Cat GIF generator application
+     image: mikesir87/cats:1.0
+     # Set a label to tell Traefik to assign a hostname to the new service
+     labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.catapp.rule=Host(`webwren.ch`)"
+      - "traefik.http.routers.catapp.entrypoints=websecure"
+      - "traefik.http.routers.catapp.service=catapp"
+      - "traefik.http.services.catapp.loadbalancer.server.port=5000"
+      # - "traefik.http.routers.catapp.tls=true"
+      - "traefik.http.routers.catapp.tls.certresolver=myresolver"
+
+
+  portainer:
+    image: portainer/portainer
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portainer.rule=HOST(`portainer.localhost`)"
+      - "traefik.http.routers.portainer.entrypoints=websecure"
+      - "traefik.http.routers.portainer.service=portainer"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+      - "traefik.http.routers.portainer.tls.certresolver=myresolver"
